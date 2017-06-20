@@ -1,0 +1,25 @@
+{
+  "name": "proxilabs-bot",
+  "version": "1.0.0",
+  "description": "A slack bot for ProxiLabs as secretary",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "slack",
+    "bot",
+    "firebase"
+  ],
+  "author": "Arnaud Foraison <a.foraison@proxiad.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/client": "^3.10.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "request-promise-native": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^4.0.0"
+  }
+}
