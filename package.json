@@ -4,6 +4,7 @@
   "description": "A slack bot for ProxiLabs as secretary",
   "main": "index.js",
   "scripts": {
+    "setup": "npm i && node setup.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,6 +17,7 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "body-parser": "^1.17.2",
+    "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "request-promise-native": "^1.0.4"
   },
