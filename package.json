@@ -4,7 +4,9 @@
   "description": "A slack bot for ProxiLabs as secretary",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "npm i && node setup.js",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log",
+    "start": "nodemon index.js"
   },
   "keywords": [
     "slack",
@@ -14,12 +16,15 @@
   "author": "Arnaud Foraison <a.foraison@proxiad.com>",
   "license": "ISC",
   "dependencies": {
-    "@slack/client": "^3.10.0",
     "body-parser": "^1.17.2",
+    "botkit": "^0.5.4",
+    "dotenv": "^4.0.0",
     "express": "^4.15.3",
+    "firebase": "^4.1.2",
     "request-promise-native": "^1.0.4"
   },
   "devDependencies": {
-    "eslint": "^4.0.0"
+    "eslint": "^4.0.0",
+    "nodemon": "^1.11.0"
   }
 }

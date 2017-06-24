@@ -1,3 +1,6 @@
+# Custom project ignoration
+.env
+
 # Logs
 logs
 *.log
