@@ -15,6 +15,6 @@ addons:
 deploy:
   provider: script
   skip_cleanup: true
-  script: chmod 600 deploy_key && scp -o StrictHostKeyChecking=no -i deploy_key dist/* root@$DEPLOY_SERVER_IP:~/proxilabs-bot
+  script: chmod 600 deploy_key && cp deploy-key ~/.ssh/id_rsa && scp -o StrictHostKeyChecking=no -i deploy_key dist/* root@$DEPLOY_SERVER_IP:~/proxilabs-bot
   on:
     branch: develop
