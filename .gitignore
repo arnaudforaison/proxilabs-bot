@@ -1,5 +1,7 @@
 # Custom project ignoration
 .env
+deploy_key
+deploy_key.pub
 
 # Logs
 logs
