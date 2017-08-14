@@ -1,6 +1,7 @@
 # Custom project ignoration
 .env
 deploy_key
+dist
 
 # Logs
 logs
