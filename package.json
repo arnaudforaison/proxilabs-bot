@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup": "npm i && node setup.js",
-    "build": "npm i && rimraf dist/ && babel ./src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log",
+    "build": "rimraf dist/ && babel ./src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log",
     "start": "nodemon index.js"
   },
   "keywords": [
