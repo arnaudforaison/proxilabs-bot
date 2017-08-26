@@ -21,4 +21,4 @@ deploy:
   on:
     branch: develop
 after_deploy:
-- ssh -o StrictHostKeyChecking=no root@$DEPLOY_SERVER_IP ~/proxilabs-bot/deploy.sh
+- ssh -o StrictHostKeyChecking=no root@$DEPLOY_SERVER_IP '~/proxilabs-bot/deploy.sh'
