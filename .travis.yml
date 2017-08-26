@@ -17,6 +17,8 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: rsync -r --delete-after --quiet -e "ssh -o StrictHostKeyChecking=no" $TRAVIS_BUILD_DIR/dist/* root@$DEPLOY_SERVER_IP:~/proxilabs-bot
+  script: 
+    - rsync -r --delete-after --quiet -e "ssh -o StrictHostKeyChecking=no" $TRAVIS_BUILD_DIR/dist/* root@$DEPLOY_SERVER_IP:~/proxilabs-bot
+    - ssh -o StrictHostKeyChecking=no root@$DEPLOY_SERVER_IP ~/proxilabs-bot/deploy.sh
   on:
     branch: develop
