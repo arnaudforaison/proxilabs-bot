@@ -1,2 +1,3 @@
-sudo docker-compose down
-sudo docker-compose up --build -d
+cd ~/proxilabs-bot
+docker-compose down
+docker-compose up --build -d
