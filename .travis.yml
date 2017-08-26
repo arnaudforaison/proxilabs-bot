@@ -8,10 +8,10 @@ notifications:
   email:
     on_success: never
 addons:
-  ssh_known_hosts: $DEPLOY_SERVER_IP
-
+  ssh_known_hosts: "$DEPLOY_SERVER_IP"
 before_deploy:
-- openssl aes-256-cbc -K $encrypted_c9a7a818a29a_key -iv $encrypted_c9a7a818a29a_iv -in deploy_key.enc -out /tmp/deploy_key -d
+- openssl aes-256-cbc -K $encrypted_c9a7a818a29a_key -iv $encrypted_c9a7a818a29a_iv
+  -in deploy_key.enc -out /tmp/deploy_key -d
 - eval "$(ssh-agent -s)"
 - chmod 600 /tmp/deploy_key
 - ssh-add /tmp/deploy_key
@@ -21,3 +21,6 @@ deploy:
   script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/dist root@$DEPLOY_SERVER_IP:~/proxilabs-bot
   on:
     branch: develop
+before_install:
+- openssl aes-256-cbc -K $encrypted_c9a7a818a29a_key -iv $encrypted_c9a7a818a29a_iv
+  -in deploy_rsa.enc -out deploy_rsa -d
