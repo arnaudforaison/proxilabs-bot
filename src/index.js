@@ -1,19 +1,10 @@
 var Botkit = require('botkit');
 var dotenv = require('dotenv');
-var firebase = require("firebase");
+var skillsSpi = require('skills-spi');
+var BudgetService = require('skills/budget.js');
 
 dotenv.load();
 
-var config = {
-  apiKey: process.env.FIREBASE_TOKEN,
-  authDomain: process.env.FIREBASE_APP,
-  databaseURL: process.env.FIREBASE_STORAGE_URL,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET
-};
-firebase.initializeApp(config);
-firebase.auth().signInAnonymously();
-
-var ref = firebase.database().ref('secretary');
 /*var initialDaysRef = ref.child('initialDays');
 initialDaysRef.set(100);*/
 
@@ -25,53 +16,14 @@ var bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN
 }).startRTM();
 
+var spi = new Spi();
+
 var message_events = ['direct_message', 'direct_mention'];
 
-function donnerBudgetInitial(bot, message) {
-  ref.child('initialDays').once('value').then(function (days) {
-    var response = `ProxiLabs Nord possède initalement ${days.val()} jours`;
-    return bot.reply(message, response);
-  }).catch(function (error) {
-    var response = `Désolé, il semblerait que je n'arrive pas a échanger avec ma mémoire (${error.message})`;
-    return bot.reply(message, response);
-  });
-}
+var budgetService = new BudgetService(spi);
 
-function initialiserBudget(bot, message) {
-  var days = message.match[1] ? +(message.match[1].match(/\d+/g)) : 0;
+controller.hears(['budget initial'], message_events, budgetService.donnerBudgetInitial);
 
-  return bot.startConversation(message, function (err, convo) {
+controller.hears(['code projet'], message_events, budgetService.rappelerCodeProjet);
 
-    convo.ask(`Est ce que vous voulez mettre à jour le budget initial de ProxiLabs a ${days} jours, pour cette année ?`, [
-      {
-        pattern: '(oui|ouai|yes|si)',
-        callback: function (response, convo) {
-          ref.child('initialDays').set(days).then(function () {
-            convo.say(`Parfait j'ai mis à jour le budget!`);
-            convo.next();
-          });
-        }
-      },
-      {
-        pattern: bot.utterances.no,
-        default: true,
-        callback: function (response, convo) {
-          convo.say(`Ok j'ai annulé ta demande.`);
-          convo.next();
-        }
-      }
-    ]);
-  });
-}
-
-controller.hears(['budget initial'], message_events, donnerBudgetInitial);
-
-function rappelerCodeProjet(bot, message) {
-  bot.reply(message, "Proxilabs-affaire 1700643");
-}
-
-controller.hears(['code projet'], message_events, rappelerCodeProjet);
-
-controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, initialiserBudget);
-
-exports.rappelerCodeProjet = rappelerCodeProjet;
+controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, budgetService.initialiserBudget);
