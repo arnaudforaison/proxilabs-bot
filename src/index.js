@@ -1,9 +1,6 @@
 var Botkit = require('botkit');
-var dotenv = require('dotenv');
-var skillsSpi = require('skills-spi');
-var BudgetService = require('skills/budget.js');
-
-dotenv.load();
+var Spi = require('./skills-spi');
+var BudgetService = require('./skills/budget.js');
 
 /*var initialDaysRef = ref.child('initialDays');
 initialDaysRef.set(100);*/

@@ -1,4 +1,6 @@
-var firebase = require("firebase");
+var firebase = require('firebase');
+var dotenv = require('dotenv');
+dotenv.load();
 
 var config = {
   apiKey: process.env.FIREBASE_TOKEN,
@@ -9,8 +11,8 @@ var config = {
 firebase.initializeApp(config);
 firebase.auth().signInAnonymously();
 
-function Spi() {
-	
-}
-Spi.prototype.database = firebase.database().ref('secretary');
-module.exports.Spi = Spi;
+var Spi = function () { 
+  this.database = firebase.database().ref('secretary');
+};
+
+module.exports = Spi;
