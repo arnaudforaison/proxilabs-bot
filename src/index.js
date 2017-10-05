@@ -38,15 +38,8 @@ controller.hears(['budget initial'], ['direct_message', 'direct_mention'], funct
 function rappelerCodeProjet(bot, message) {
   bot.reply(message, "Proxilabs-affaire 1700643");
 }
-rappelerCodeProjet.prototype.pattern = ['code projet'];
-rappelerCodeProjet.prototype.channels = ['direct_message', 'direct_mention'];
 
-function register(controlleur, comportement){
-  var toto = comportement.prototype;
-  controller.hears(toto.pattern, toto.channels, comportement);    
-}
-
-register(controller, rappelerCodeProjet);
+controller.hears(['code projet'],  ['direct_message', 'direct_mention'], rappelerCodeProjet);
 
 controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], ['direct_message', 'direct_mention'], function (bot, message) {
   var days = message.match[1] ? +(message.match[1].match(/\d+/g)) : 0;
