@@ -25,7 +25,9 @@ var bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN
 }).startRTM();
 
-controller.hears(['budget initial'], ['direct_message', 'direct_mention'], function (bot, message) {
+var message_events = ['direct_message', 'direct_mention'];
+
+function donnerBudgetInitial(bot, message) {
   ref.child('initialDays').once('value').then(function (days) {
     var response = `ProxiLabs Nord possède initalement ${days.val()} jours`;
     return bot.reply(message, response);
@@ -33,15 +35,9 @@ controller.hears(['budget initial'], ['direct_message', 'direct_mention'], funct
     var response = `Désolé, il semblerait que je n'arrive pas a échanger avec ma mémoire (${error.message})`;
     return bot.reply(message, response);
   });
-});
-
-function rappelerCodeProjet(bot, message) {
-  bot.reply(message, "Proxilabs-affaire 1700643");
 }
 
-controller.hears(['code projet'],  ['direct_message', 'direct_mention'], rappelerCodeProjet);
-
-controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], ['direct_message', 'direct_mention'], function (bot, message) {
+function initialiserBudget(bot, message) {
   var days = message.match[1] ? +(message.match[1].match(/\d+/g)) : 0;
 
   return bot.startConversation(message, function (err, convo) {
@@ -66,8 +62,16 @@ controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], ['direct_message',
       }
     ]);
   });
-});
+}
 
+controller.hears(['budget initial'], message_events, donnerBudgetInitial);
 
+function rappelerCodeProjet(bot, message) {
+  bot.reply(message, "Proxilabs-affaire 1700643");
+}
+
+controller.hears(['code projet'], message_events, rappelerCodeProjet);
+
+controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, initialiserBudget);
 
 exports.rappelerCodeProjet = rappelerCodeProjet;
