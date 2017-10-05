@@ -6,7 +6,7 @@
   "scripts": {
     "setup": "npm i && node setup.js",
     "build": "rimraf dist/ && mkdir dist && cp ./src/* dist/ && cp ./scripts/* dist/ && cp package.json dist/",
-    "start": "nodemon index.js"
+    "start": "nodemon src/index.js"
   },
   "keywords": [
     "slack",
