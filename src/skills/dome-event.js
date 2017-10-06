@@ -3,7 +3,7 @@ var moment = require('moment');
 var Reminder = function(spi, anticipationDelayMs, alreadyNotifiedAttributeName, messageFormat) {
     
     this.mustDisplayEvent = function(nextDomeEvent) {
-        var scheduledEventDate = nextDomeEvent.date.getTime();
+        var scheduledEventDate = moment(nextDomeEvent.date, "DD/MM/YYYY").toDate().getTime();
         var now = spi.calendar.now().getTime();
         var currentDelay = scheduledEventDate - now;
         return currentDelay >= 0
@@ -19,35 +19,44 @@ var DomeEventService = function(spi) {
 
     this.reminders = [];
 
-    this.getNextDomeEvent = function() {
-        return {
-            date: new Date(2017, 9, 9),
-            title: 'Présentation du ProxiBot',
-            author: 'Jane Done'
-        };
+    this.getNextDomeEvent = function(doAfter) {
+        spi.database('dome-events').once('value').then(function(allEvents) {
+            var nextEvent = undefined;
+            var arr = allEvents.val();
+            var now = moment(spi.calendar.now());
+            var bestDate = undefined;
+
+            for(var i in arr) {
+                var evt = arr[i];
+                var date = moment(evt.date, "DD/MM/YYYY");
+                if(date.isAfter(now) && (!bestDate || date.isBefore(bestDate))) {
+                    bestDate = date;
+                    nextEvent = evt;
+               }
+            }
+            doAfter(nextEvent);            
+        }, function() { doAfter(undefined); });        
     }
 
     this.yieldNextDomeEvent = function() {
         var anticipationDelayMs = 7 * dayMs;
-        var nextDomeEvent = this.getNextDomeEvent();
-        if (nextDomeEvent) {
-            for (var i in this.reminders) {
-                var reminder = this.reminders[i];
-
-                if(reminder.mustDisplayEvent(nextDomeEvent)) {
-                    var message = reminder.formatMessageForEvent(nextDomeEvent);
-                    spi.bot.say(message);    
+        var myReminders = this.reminders;
+        this.getNextDomeEvent(function(nextDomeEvent) {
+            if (nextDomeEvent) {
+                for (var i in myReminders) {
+                    var reminder = myReminders[i];
+                    if(reminder.mustDisplayEvent(nextDomeEvent)) {
+                        var message = reminder.formatMessageForEvent(nextDomeEvent);
+                        spi.bot.say(message);    
+                    }
                 }
-            }
-        }
+            }    
+        });
     }
 
     this.formatMessage7DaysBeforeEvent = function(domeEvent) {
-        var momentedDate = moment(domeEvent.date);
-        var dateString = momentedDate.format('DD/MM/YYYY');
-
         var message = {
-            text: `Le prochain Dome Event aura lieu le ${dateString} à 12h30, au CDS.\nIl sera animé par ${domeEvent.author}.\nSujet du jour : ${domeEvent.title}.`,
+            text: `Le prochain Dome Event aura lieu le ${domeEvent.date} à 12h30, au CDS.\nIl sera animé par ${domeEvent.author}.\nSujet du jour : ${domeEvent.title}.`,
             channel: '#testbot'
         };
 
@@ -67,8 +76,7 @@ var DomeEventService = function(spi) {
             var txt = '';
             for(var i in arr) {
                 var evt = arr[i];
-                var date = moment(evt.date).format('DD/MM/YYYY');
-                txt += `${evt.id} : ${date} ${evt.author} ${evt.title}\n`;
+                txt += `${evt.id} : ${evt.date} ${evt.author} ${evt.title}\n`;
             }
             bot.reply(message, txt);            
         });
@@ -101,7 +109,7 @@ var DomeEventService = function(spi) {
                         default: true,
                         pattern: '.*',
                         callback: function(response, convo) {
-                            var eventDate = moment(response.text);
+                            var eventDate = moment(response.text, "DD/MM/YYYY");
 
                             convo.ask('Qui animera ce dome event ?', [
                                 endPattern,
@@ -112,7 +120,7 @@ var DomeEventService = function(spi) {
                                         var author = response.text;
                                         var domeEvent = {
                                             id: eventId,
-                                            date: eventDate.toDate(),
+                                            date: eventDate.format("DD/MM/YYYY"),
                                             title: subject,
                                             author: author
                                         };

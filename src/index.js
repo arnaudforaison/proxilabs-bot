@@ -27,7 +27,7 @@ controller.hears(['code projet'], message_events, budgetService.rappelerCodeProj
 
 controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, budgetService.initialiserBudget);
 
-controller.hears(['annonce dome event'], message_events, function(bot, message) { domeEventService.yieldNextDomeEvent() });
+controller.hears(['annonce dome event'], message_events, function(bot, message) { domeEventService.yieldNextDomeEvent(); });
 
 controller.hears(['liste dome events'], message_events, domeEventService.listDomeEvents);
 
