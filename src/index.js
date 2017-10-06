@@ -7,14 +7,17 @@ initialDaysRef.set(100);*/
 
 var controller = Botkit.slackbot({
   interactive_replies: true,
-  clientId: process.env.clientId,
-  clientSecret: process.env.clientSecret,
-  scopes: ['incoming-webhook','team:read','users:read','channels:read','im:read','im:write','groups:read','emoji:read','chat:write:bot']
+  debug: true
+}).configureSlackApp({
+  clientId: process.env.SLACK_BOT_CLIENT_ID,
+  clientSecret: process.env.SLACK_BOT_CLIENT_SECRET,
+  redirectUri: 'http://localhost:9090',
+  scopes: ['incoming-webhook', 'team:read', 'users:read', 'channels:read', 'im:read', 'im:write', 'groups:read', 'emoji:read', 'chat:write:bot']
 });
 
 var bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN
-}).startRTM();
+});
 
 // Initialisation slash command
 bot.api.team.info({}, function (err, res) {
@@ -29,8 +32,12 @@ bot.api.team.info({}, function (err, res) {
   })
 });
 controller.setupWebserver('9090', function (err, webserver) {
-  controller.createOauthEndpoints(controller.webserver);
-  controller.createWebhookEndpoints(controller.webserver);
+  controller.createOauthEndpoints(controller.webserver, function (err, req, resp) {
+    console.log('Error createOauthEndpoints: ', err);
+    console.log('Req createOauthEndpoints: ', req);
+    console.log('Resp createOauthEndpoints: ', resp);
+  })
+  .createWebhookEndpoints(controller.webserver, controller.token);
 });
 
 var spi = new Spi();
@@ -48,17 +55,23 @@ controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, bu
 controller.on('slash_command', function (bot, message) {
   switch (message.command) {
     case '/consommation':
-    var dialog = bot.createDialog(
-      'Title of dialog',
-      'callback_id',
-      'Button Label'
-    );
-    console.log('dialog created : ',dialog.asObject());
-
-      bot.replyWithDialog(message, dialog.asObject(), function (err, resp) {
-        console.log('Error: ', err);
-        console.log('Resp: ', resp);
-      });
+      var dialog = bot.createDialog(
+        'Title of dialog',
+        'callback_id',
+        'Ok'
+      ).addText('Text','text','some text')
+      .addSelect('Select','select',null,[{label:'Foo',value:'foo'},{label:'Bar',value:'bar'}],{placeholder: 'Select One'})
+      .addTextarea('Textarea','textarea','some longer text',{placeholder: 'Put words here'})
+      .addUrl('Website','url','http://botkit.ai');
+      var dialogObject = dialog.asObject();
+      var messageInteraction = {
+        'dialog': JSON.stringify(dialogObject),
+        'trigger_id': message.trigger_id,
+        'token': process.env.SLACK_BOT_TOKEN
+      };
+      
+      bot.api.dialog.open(messageInteraction);
+      
       break;
 
     default:
