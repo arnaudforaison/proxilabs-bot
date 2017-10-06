@@ -12,6 +12,14 @@ var Reminder = function(spi, anticipationDelayMs, alreadyNotifiedAttributeName, 
     }
 
     this.formatMessageForEvent = messageFormat;
+
+    this.markAlreadyNotified = function(domeEvent) {
+        domeEvent[alreadyNotifiedAttributeName] = true;
+        // oubli intentionnel du traitement d'erreur :
+        // * on lance ce code dans le Cron, sans supervision
+        // * si le traitement échoue, on veut précisément qu'il se relance la fois d'après
+        spi.database('dome-events').child(domeEvent.id).set(domeEvent);
+    }
 }
 
 var DomeEventService = function(spi) {
@@ -49,6 +57,7 @@ var DomeEventService = function(spi) {
                     if(reminder.mustDisplayEvent(nextDomeEvent)) {
                         var message = reminder.formatMessageForEvent(nextDomeEvent);
                         spi.bot.say(message); 
+                        reminder.markAlreadyNotified(nextDomeEvent);
                         break;   
                     }
                 }
@@ -68,7 +77,7 @@ var DomeEventService = function(spi) {
     this.resetReminders = function() {
         this.reminders = [
             new Reminder(spi, 7 * dayMs, "notified7daysBefore", this.formatMessage7DaysBeforeEvent),
-            new Reminder(spi, 1 * dayMs, "notified1dasBefore", this.formatMessage7DaysBeforeEvent),
+            new Reminder(spi, 1 * dayMs, "notified1dayBefore", this.formatMessage7DaysBeforeEvent),
             new Reminder(spi, 1 * hourMs, "notified1hourBefore", this.formatMessage7DaysBeforeEvent)
         ];
     }
@@ -80,6 +89,7 @@ var DomeEventService = function(spi) {
             var txt = '';
             for(var i in arr) {
                 var evt = arr[i];
+                console.log(evt);
                 txt += `${evt.id} : ${evt.date} ${evt.author} ${evt.title}\n`;
             }
             bot.reply(message, txt);            
