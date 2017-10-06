@@ -103,7 +103,7 @@ describe('DomeEventService', function(){
             var message = domeEventService.formatMessage7DaysBeforeEvent(domeEvent);
     
             expect(message.text).toBe('Le prochain Dome Event aura lieu le 12/06/2017 à 12h30, au CDS.\nIl sera animé par Jane Done.\nSujet du jour : Présentation du ProxiBot.');
-            expect(message.channel).toBe('#general');
+            expect(message.channel).toBe('#testbot');
         });
     });
 });

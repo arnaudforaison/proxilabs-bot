@@ -48,7 +48,7 @@ var DomeEventService = function(spi) {
 
         var message = {
             text: `Le prochain Dome Event aura lieu le ${dateString} à 12h30, au CDS.\nIl sera animé par ${domeEvent.author}.\nSujet du jour : ${domeEvent.title}.`,
-            channel: '#general'
+            channel: '#testbot'
         };
 
         return message;
@@ -60,6 +60,78 @@ var DomeEventService = function(spi) {
         ];
     }
 
+    this.listDomeEvents = function (bot, message) {
+        
+        spi.database('dome-events').once('value').then(function(allEvents) {
+            var arr = allEvents.val();
+            var txt = '';
+            for(var i in arr) {
+                var evt = arr[i];
+                var date = moment(evt.date).format('DD/MM/YYYY');
+                txt += `${evt.id} : ${date} ${evt.author} ${evt.title}\n`;
+            }
+            bot.reply(message, txt);            
+        });
+    }
+
+    var endPattern = {
+        pattern: 'laisse tomber',
+        callback: function (response, convo) {
+          convo.say('OK j\'ai annulé ta demande.');
+          convo.next();
+        }
+    };
+
+    this.addDomeEvent = function (bot, message) {
+        var eventId = message.match[1] ? message.match[1] : '0';
+        
+        return bot.startConversation(message, function (err, convo) {
+      
+          convo.ask(`De quoi parle le dome event ${eventId} ?`, [
+            endPattern,
+            {
+              default: true,
+              pattern: '.*',
+              callback: function (response, convo) {
+                  var subject = response.text;
+
+                  convo.ask('Quand aura lieu ce dome event ?', [
+                    endPattern,
+                    {
+                        default: true,
+                        pattern: '.*',
+                        callback: function(response, convo) {
+                            var eventDate = moment(response.text);
+
+                            convo.ask('Qui animera ce dome event ?', [
+                                endPattern,
+                                {
+                                    default: true,
+                                    pattern: '.*',
+                                    callback: function(response, convo) {
+                                        var author = response.text;
+                                        var domeEvent = {
+                                            id: eventId,
+                                            date: eventDate.toDate(),
+                                            title: subject,
+                                            author: author
+                                        };
+                                        spi.database('dome-events').child(eventId).set(domeEvent).then(function () {
+                                            convo.say(`Parfait c'est noté pour le dome event ${eventId} !`);
+                                            convo.next();
+                                          });
+    
+                                    }                                
+                                }]);
+                            convo.next();                                        
+                        }
+                    }]);
+                    convo.next();
+                }
+            }]);  
+        });
+    }
+    
     this.resetReminders();
 }
 

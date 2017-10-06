@@ -29,3 +29,6 @@ controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, bu
 
 controller.hears(['annonce dome event'], message_events, function(bot, message) { domeEventService.yieldNextDomeEvent() });
 
+controller.hears(['liste dome events'], message_events, domeEventService.listDomeEvents);
+
+controller.hears(['nouveau dome event ([^ ]*)'], message_events, domeEventService.addDomeEvent);
