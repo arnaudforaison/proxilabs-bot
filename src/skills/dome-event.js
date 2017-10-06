@@ -15,7 +15,8 @@ var Reminder = function(spi, anticipationDelayMs, alreadyNotifiedAttributeName, 
 }
 
 var DomeEventService = function(spi) {
-    var dayMs = 24 * 60 * 60 * 1000;
+    var hourMs = 60 * 60 * 1000;
+    var dayMs = 24 * hourMs;
 
     this.reminders = [];
 
@@ -47,7 +48,8 @@ var DomeEventService = function(spi) {
                     var reminder = myReminders[i];
                     if(reminder.mustDisplayEvent(nextDomeEvent)) {
                         var message = reminder.formatMessageForEvent(nextDomeEvent);
-                        spi.bot.say(message);    
+                        spi.bot.say(message); 
+                        break;   
                     }
                 }
             }    
@@ -65,7 +67,9 @@ var DomeEventService = function(spi) {
 
     this.resetReminders = function() {
         this.reminders = [
-            new Reminder(spi, 7 * dayMs, "notified7daysBefore", this.formatMessage7DaysBeforeEvent)
+            new Reminder(spi, 7 * dayMs, "notified7daysBefore", this.formatMessage7DaysBeforeEvent),
+            new Reminder(spi, 1 * dayMs, "notified1dasBefore", this.formatMessage7DaysBeforeEvent),
+            new Reminder(spi, 1 * hourMs, "notified1hourBefore", this.formatMessage7DaysBeforeEvent)
         ];
     }
 
