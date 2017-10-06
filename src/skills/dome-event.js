@@ -1,3 +1,4 @@
+var moment = require('moment');
 
 var Reminder = function(spi, anticipationDelayMs, alreadyNotifiedAttributeName, messageFormat) {
     
@@ -38,8 +39,11 @@ var DomeEventService = function(spi) {
     }
 
     this.formatMessage7DaysBeforeEvent = function(domeEvent) {
+        var momentedDate = moment(domeEvent.date);
+        var dateString = momentedDate.format('DD/MM/YYYY');
+
         var message = {
-            text: 'OMG look at this thing',
+            text: `Le prochain Dome Event aura lieu le ${dateString} à 12h30, au CDS.\nIl sera animé par ${domeEvent.author}.\nSujet du jour : ${domeEvent.title}.`,
             channel: '#general'
         };
 

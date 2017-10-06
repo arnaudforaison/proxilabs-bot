@@ -83,10 +83,27 @@ describe('DomeEventService', function(){
             spyOn(domeEventService, 'formatMessage7DaysBeforeEvent').and.returnValue(formattedMessage);
 
             domeEventService.resetReminders();
-            
+
             domeEventService.yieldNextDomeEvent();
 
             expect(bot.say).toHaveBeenCalledWith(formattedMessage);
+        });
+    });
+
+    describe('formatMessage7DaysBeforeEvent', function(){
+        it('renvoie le message formatté', function(){
+            var domeEventService = new DomeEventService(undefined);
+            
+            var domeEvent = {
+                date: new Date(2017, 5, 12),
+                title: 'Présentation du ProxiBot',
+                author: 'Jane Done'
+            };
+    
+            var message = domeEventService.formatMessage7DaysBeforeEvent(domeEvent);
+    
+            expect(message.text).toBe('Le prochain Dome Event aura lieu le 12/06/2017 à 12h30, au CDS.\nIl sera animé par Jane Done.\nSujet du jour : Présentation du ProxiBot.');
+            expect(message.channel).toBe('#general');
         });
     });
 });
