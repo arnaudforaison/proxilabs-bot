@@ -2,6 +2,7 @@ var Botkit = require('botkit');
 var Spi = require('./skills-spi');
 var BudgetService = require('./skills/budget.js');
 var DomeEventService = require('./skills/dome-event.js');
+var cron = require('node-cron');
 
 /*var initialDaysRef = ref.child('initialDays');
 initialDaysRef.set(100);*/
@@ -32,3 +33,7 @@ controller.hears(['annonce dome event'], message_events, function(bot, message) 
 controller.hears(['liste dome events'], message_events, domeEventService.listDomeEvents);
 
 controller.hears(['nouveau dome event ([^ ]*)'], message_events, domeEventService.addDomeEvent);
+
+var job = cron.schedule('00 00 * * * *', function() {
+  domeEventService.yieldNextDomeEvent();
+});

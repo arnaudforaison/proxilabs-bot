@@ -68,7 +68,7 @@ var DomeEventService = function(spi) {
     this.formatMessage7DaysBeforeEvent = function(domeEvent) {
         var message = {
             text: `Le prochain Dome Event aura lieu le ${domeEvent.date} à 12h30, au CDS.\nIl sera animé par ${domeEvent.author}.\nSujet du jour : ${domeEvent.title}.`,
-            channel: '#testbot'
+            channel: '#general'
         };
 
         return message;

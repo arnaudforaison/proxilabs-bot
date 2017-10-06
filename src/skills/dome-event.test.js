@@ -83,7 +83,7 @@ describe('DomeEventService', function(){
             now = new Date(2017, 12, 1, 12, 31, 0, 0);
             var formattedMessage = {
                 text: 'Le prochain Dome Event aura lieu le xx/xx/xx sur le thème 42.',
-                channel: '#testbot'
+                channel: '#general'
             };            
             spyOn(bot, 'say').and.stub();
             spyOn(mockDb, 'getNextDomeEvent').and.returnValue(domeEvent);
@@ -110,7 +110,7 @@ describe('DomeEventService', function(){
             var message = domeEventService.formatMessage7DaysBeforeEvent(domeEvent);
     
             expect(message.text).toBe('Le prochain Dome Event aura lieu le 12/06/2017 à 12h30, au CDS.\nIl sera animé par Jane Done.\nSujet du jour : Présentation du ProxiBot.');
-            expect(message.channel).toBe('#testbot');
+            expect(message.channel).toBe('#general');
         });
     });
 });
