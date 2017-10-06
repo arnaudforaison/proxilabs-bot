@@ -19,6 +19,14 @@ var DomeEventService = function(spi) {
 
     this.reminders = [];
 
+    this.getNextDomeEvent = function() {
+        return {
+            date: new Date(2017, 9, 9),
+            title: 'Présentation du ProxiBot',
+            author: 'Jane Done'
+        };
+    }
+
     this.yieldNextDomeEvent = function() {
         var anticipationDelayMs = 7 * dayMs;
         var nextDomeEvent = this.getNextDomeEvent();
@@ -32,10 +40,6 @@ var DomeEventService = function(spi) {
                 }
             }
         }
-    }
-
-    this.getNextDomeEvent = function() {
-        return undefined;
     }
 
     this.formatMessage7DaysBeforeEvent = function(domeEvent) {
