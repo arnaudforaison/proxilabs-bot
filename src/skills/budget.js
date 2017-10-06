@@ -13,9 +13,9 @@ var BudgetService = function (spi) {
 
   this.initialiserBudget = function (bot, message) {
     var days = message.match[1] ? +(message.match[1].match(/\d+/g)) : 0;
-  
+
     return bot.startConversation(message, function (err, convo) {
-  
+
       convo.ask(`Est ce que vous voulez mettre à jour le budget initial de ProxiLabs a ${days} jours, pour cette année ?`, [
         {
           pattern: '(oui|ouai|yes|si)',
@@ -40,6 +40,25 @@ var BudgetService = function (spi) {
 
   this.rappelerCodeProjet = function (bot, message) {
     bot.reply(message, "Proxilabs-affaire 1700643");
+  }
+
+  this.enregistrerConsommation = function (bot, message) {
+    var dialog = bot.createDialog(
+      'Title of dialog',
+      'callback_id',
+      'Ok'
+    ).addText('Text', 'text', 'some text')
+      .addSelect('Select', 'select', null, [{ label: 'Foo', value: 'foo' }, { label: 'Bar', value: 'bar' }], { placeholder: 'Select One' })
+      .addTextarea('Textarea', 'textarea', 'some longer text', { placeholder: 'Put words here' })
+      .addUrl('Website', 'url', 'http://botkit.ai');
+    
+    var messageInteraction = {
+      'dialog': JSON.stringify(dialog.asObject()),
+      'trigger_id': message.trigger_id,
+      'token': process.env.SLACK_BOT_TOKEN
+    };
+
+    bot.api.dialog.open(messageInteraction);
   }
 }
 
