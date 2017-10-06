@@ -13,7 +13,7 @@ var bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN
 }).startRTM();
 
-var spi = new Spi();
+var spi = new Spi(bot);
 
 var message_events = ['direct_message', 'direct_mention'];
 

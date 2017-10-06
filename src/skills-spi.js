@@ -11,8 +11,9 @@ var config = {
 firebase.initializeApp(config);
 firebase.auth().signInAnonymously();
 
-var Spi = function () { 
+var Spi = function (bot) { 
   this.database = firebase.database().ref('secretary');
+  this.bot = bot;
 };
 
 module.exports = Spi;
