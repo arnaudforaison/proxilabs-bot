@@ -11,13 +11,13 @@ var controller = Botkit.slackbot({
 }).configureSlackApp({
   clientId: process.env.SLACK_BOT_CLIENT_ID,
   clientSecret: process.env.SLACK_BOT_CLIENT_SECRET,
-  redirectUri: 'http://localhost:9090',
-  scopes: ['incoming-webhook', 'team:read', 'users:read', 'channels:read', 'im:read', 'im:write', 'groups:read', 'emoji:read', 'chat:write:bot']
+  redirectUri: 'http://1f3f5d7b.ngrok.io/oauth',
+  scopes: ['bot', 'incoming-webhook', 'team:read', 'users:read', 'channels:read', 'im:read', 'im:write', 'groups:read', 'emoji:read', 'chat:write:bot']
 });
 
 var bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN
-});
+}).startRTM();
 
 // Initialisation slash command
 bot.api.team.info({}, function (err, res) {
@@ -32,7 +32,9 @@ bot.api.team.info({}, function (err, res) {
 });
 
 controller.setupWebserver('9090', function (err, webserver) {
-  controller.createOauthEndpoints(controller.webserver)
+  controller.createOauthEndpoints(controller.webserver, function(err, req, res){
+    console.log('createOauthEndpoints', err, req, res);
+  })
     .createWebhookEndpoints(controller.webserver, controller.token);
 });
 
@@ -51,11 +53,16 @@ controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, bu
 controller.on('slash_command', function (bot, message) {
   switch (message.command) {
     case '/consommation':
-      budgetService.enregistrerConsommation(bot, message);
+      budgetService.enregistrerConsommation(controller, bot, message);
       break;
 
     default:
       bot.replyPublic(message, `Je vous ai compris !!!`);
       break;
   }
+});
+
+controller.on('dialog_submission', function(bot, message) {
+  //bot.reply(message, 'debrouille toi');
+  bot.dialogOk();
 });
