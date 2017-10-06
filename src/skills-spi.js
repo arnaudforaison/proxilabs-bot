@@ -18,7 +18,9 @@ function Calendar() {
 }
 
 var Spi = function (bot) { 
-  this.database = firebase.database().ref('secretary');
+  this.database = function(ref) { 
+    return firebase.database().ref(ref);
+  };
   this.bot = bot;
   this.calendar = new Calendar();
 };

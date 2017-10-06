@@ -2,7 +2,7 @@
 var BudgetService = function (spi) {
 
   this.donnerBudgetInitial = function (bot, message) {
-    spi.database.child('initialDays').once('value').then(function (days) {
+    spi.database('secretary').child('initialDays').once('value').then(function (days) {
       var response = `ProxiLabs Nord possède initalement ${days.val()} jours`;
       return bot.reply(message, response);
     }).catch(function (error) {
@@ -20,7 +20,7 @@ var BudgetService = function (spi) {
         {
           pattern: '(oui|ouai|yes|si)',
           callback: function (response, convo) {
-            spi.database.child('initialDays').set(days).then(function () {
+            spi.database('secretary').child('initialDays').set(days).then(function () {
               convo.say(`Parfait j'ai mis à jour le budget!`);
               convo.next();
             });
