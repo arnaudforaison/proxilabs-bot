@@ -6,7 +6,8 @@
   "scripts": {
     "setup": "npm i && node setup.js",
     "build": "rimraf dist/ && mkdir dist && cp ./src/* dist/ && cp ./scripts/* dist/ && cp package.json dist/",
-    "start": "nodemon src/index.js"
+    "start": "nodemon --watch src src/index.js",
+    "test": "jasmine --config=./jasmine.json"
   },
   "keywords": [
     "slack",
@@ -17,14 +18,15 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "botkit": "^0.5.4",
+    "botkit": "^0.5.8",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
-    "firebase": "^4.1.2",
+    "firebase": "^4.5.0",
     "request-promise-native": "^1.0.4"
   },
   "devDependencies": {
     "eslint": "^4.0.0",
+    "jasmine": "^2.8.0",
     "nodemon": "^1.11.0"
   }
 }
