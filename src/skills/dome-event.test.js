@@ -12,18 +12,19 @@ describe('DomeEventService', function(){
             };
             var domeEventService = new DomeEventService(spi);
             var domeEvent = {};
-            var messageAttendu = {
-                text: 'OMG look at this thing',
+            var formattedMessage = {
+                text: 'Le prochain Dome Event aura lieu le xx/xx/xx sur le thème 42.',
                 channel: '#general'
             };
             
 
             spyOn(bot, 'say').and.stub();
             spyOn(domeEventService, 'getNextDomeEvent').and.returnValue(domeEvent);
+            spyOn(domeEventService, 'formatMessageForEvent').and.returnValue(formattedMessage);
 
             domeEventService.yieldNextDomeEvent();
 
-            expect(bot.say).toHaveBeenCalledWith(messageAttendu);
+            expect(bot.say).toHaveBeenCalledWith(formattedMessage);
         });
     });
 });
