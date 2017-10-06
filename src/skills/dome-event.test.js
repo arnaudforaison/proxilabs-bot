@@ -28,11 +28,11 @@ describe('DomeEventService', function(){
         it('n\'annonce pas de prochain Dome Event s\'il n\'y a pas de prochain Dome Event', function(){
             spyOn(bot, 'say').and.stub();
             spyOn(domeEventService, 'getNextDomeEvent').and.returnValue(undefined);
-            spyOn(domeEventService, 'formatMessageForEvent').and.stub();
+            spyOn(domeEventService, 'formatMessage7DaysBeforeEvent').and.stub();
 
             domeEventService.yieldNextDomeEvent();
 
-            expect(domeEventService.formatMessageForEvent).not.toHaveBeenCalled();
+            expect(domeEventService.formatMessage7DaysBeforeEvent).not.toHaveBeenCalled();
             expect(bot.say).not.toHaveBeenCalled();
         });
 
@@ -43,11 +43,11 @@ describe('DomeEventService', function(){
             };
             spyOn(bot, 'say').and.stub();
             spyOn(domeEventService, 'getNextDomeEvent').and.returnValue(domeEvent);
-            spyOn(domeEventService, 'formatMessageForEvent').and.stub();
+            spyOn(domeEventService, 'formatMessage7DaysBeforeEvent').and.stub();
 
             domeEventService.yieldNextDomeEvent();
 
-            expect(domeEventService.formatMessageForEvent).not.toHaveBeenCalled();
+            expect(domeEventService.formatMessage7DaysBeforeEvent).not.toHaveBeenCalled();
             expect(bot.say).not.toHaveBeenCalled();
         });
 
@@ -58,11 +58,11 @@ describe('DomeEventService', function(){
             };
             spyOn(bot, 'say').and.stub();
             spyOn(domeEventService, 'getNextDomeEvent').and.returnValue(domeEvent);
-            spyOn(domeEventService, 'formatMessageForEvent').and.stub();
+            spyOn(domeEventService, 'formatMessage7DaysBeforeEvent').and.stub();
 
             domeEventService.yieldNextDomeEvent();
 
-            expect(domeEventService.formatMessageForEvent).not.toHaveBeenCalled();
+            expect(domeEventService.formatMessage7DaysBeforeEvent).not.toHaveBeenCalled();
             expect(bot.say).not.toHaveBeenCalled();
         });
 
@@ -80,8 +80,10 @@ describe('DomeEventService', function(){
 
             spyOn(bot, 'say').and.stub();
             spyOn(domeEventService, 'getNextDomeEvent').and.returnValue(domeEvent);
-            spyOn(domeEventService, 'formatMessageForEvent').and.returnValue(formattedMessage);
+            spyOn(domeEventService, 'formatMessage7DaysBeforeEvent').and.returnValue(formattedMessage);
 
+            domeEventService.resetReminders();
+            
             domeEventService.yieldNextDomeEvent();
 
             expect(bot.say).toHaveBeenCalledWith(formattedMessage);
