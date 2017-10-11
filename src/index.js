@@ -8,12 +8,37 @@ var cron = require('node-cron');
 initialDaysRef.set(100);*/
 
 var controller = Botkit.slackbot({
-  interactive_replies: true
+  interactive_replies: true,
+  debug: false
+}).configureSlackApp({
+  clientId: process.env.SLACK_BOT_CLIENT_ID,
+  clientSecret: process.env.SLACK_BOT_CLIENT_SECRET,
+  redirectUri: 'http://1f3f5d7b.ngrok.io/oauth',
+  scopes: ['bot', 'incoming-webhook', 'team:read', 'users:read', 'channels:read', 'im:read', 'im:write', 'groups:read', 'emoji:read', 'chat:write:bot']
 });
 
 var bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN
 }).startRTM();
+
+// Initialisation slash command
+bot.api.team.info({}, function (err, res) {
+  if (err) {
+    return console.error(err)
+  }
+  controller.storage.teams.save({ id: res.team.id }, (err) => {
+    if (err) {
+      console.error(err)
+    }
+  })
+});
+
+controller.setupWebserver('9090', function (err, webserver) {
+  controller.createOauthEndpoints(controller.webserver, function(err, req, res){
+    console.log('createOauthEndpoints', err, req, res);
+  })
+    .createWebhookEndpoints(controller.webserver, controller.token);
+});
 
 var spi = new Spi(bot);
 
@@ -33,6 +58,23 @@ controller.hears(['annonce dome event'], message_events, function(bot, message) 
 controller.hears(['liste dome events'], message_events, domeEventService.listDomeEvents);
 
 controller.hears(['nouveau dome event ([^ ]*)'], message_events, domeEventService.addDomeEvent);
+
+controller.on('slash_command', function (bot, message) {
+  switch (message.command) {
+    case '/consommation':
+      budgetService.enregistrerConsommation(controller, bot, message);
+      break;
+
+    default:
+      bot.replyPublic(message, `Je vous ai compris !!!`);
+      break;
+  }
+});
+
+controller.on('dialog_submission', function(bot, message) {
+  //bot.reply(message, 'debrouille toi');
+  bot.dialogOk();
+});
 
 var job = cron.schedule('00 00 * * * *', function() {
   domeEventService.yieldNextDomeEvent();
