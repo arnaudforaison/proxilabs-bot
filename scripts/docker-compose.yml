@@ -1,10 +1,6 @@
 version: '3'
 services:
   proxilabsbot:
-    build: .
-    command: npm run start
-    volumes:
-      - /usr/app/node_modules
     ports:
       - "3000:3000"
     env_file:
