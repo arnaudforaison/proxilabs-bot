@@ -1,6 +1,8 @@
 var Botkit = require('botkit');
 var Spi = require('./skills-spi');
 var BudgetService = require('./skills/budget.js');
+var DomeEventService = require('./skills/dome-event.js');
+var cron = require('node-cron');
 
 /*var initialDaysRef = ref.child('initialDays');
 initialDaysRef.set(100);*/
@@ -38,17 +40,24 @@ controller.setupWebserver('9090', function (err, webserver) {
     .createWebhookEndpoints(controller.webserver, controller.token);
 });
 
-var spi = new Spi();
+var spi = new Spi(bot);
 
 var message_events = ['direct_message', 'direct_mention'];
 
 var budgetService = new BudgetService(spi);
+var domeEventService = new DomeEventService(spi);
 
 controller.hears(['budget initial'], message_events, budgetService.donnerBudgetInitial);
 
 controller.hears(['code projet'], message_events, budgetService.rappelerCodeProjet);
 
 controller.hears(['(.*)\s*(jours|jour|j)', 'nouveau budget'], message_events, budgetService.initialiserBudget);
+
+controller.hears(['annonce dome event'], message_events, function(bot, message) { domeEventService.yieldNextDomeEvent(); });
+
+controller.hears(['liste dome events'], message_events, domeEventService.listDomeEvents);
+
+controller.hears(['nouveau dome event ([^ ]*)'], message_events, domeEventService.addDomeEvent);
 
 controller.on('slash_command', function (bot, message) {
   switch (message.command) {
@@ -65,4 +74,8 @@ controller.on('slash_command', function (bot, message) {
 controller.on('dialog_submission', function(bot, message) {
   //bot.reply(message, 'debrouille toi');
   bot.dialogOk();
+});
+
+var job = cron.schedule('00 00 * * * *', function() {
+  domeEventService.yieldNextDomeEvent();
 });
