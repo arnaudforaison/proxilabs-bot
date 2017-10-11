@@ -1,7 +1,12 @@
-dist: precise
+sudo: required
+
 language: node_js
 node_js:
 - node
+
+services:
+- docker
+
 script:
 - npm test
 notifications:
@@ -15,7 +20,7 @@ before_deploy:
 - chmod 600 /tmp/deploy_rsa
 - ssh-add /tmp/deploy_rsa
 - docker build -t arnaudforaison/proxilabs-bot .
-- docker login -u $DOCKER_ID_USER -p $DOCKER_PWD_USER
+- docker login -u="$DOCKER_ID_USER" -p="$DOCKER_PWD_USER"
 deploy:
   provider: script
   skip_cleanup: true
