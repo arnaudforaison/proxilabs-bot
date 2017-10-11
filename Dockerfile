@@ -10,4 +10,3 @@ RUN npm i --quiet
 
 # Copy app source
 COPY src .
-RUN node index.js
