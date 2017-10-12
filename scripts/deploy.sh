@@ -1,3 +1,4 @@
 cd ~/proxilabs-bot
 docker-compose down
-docker-compose up -d --pull
+docker pull arnaudforaison/proxilabs-bot
+docker-compose up -d
