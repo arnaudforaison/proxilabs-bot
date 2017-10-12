@@ -10,4 +10,4 @@ RUN npm i --quiet
 
 # Copy app source
 COPY src .
-CMD [ "npm", "run", "start" ]
+CMD [ "node", "/usr/app/proxilabs-bot/index.js" ]
