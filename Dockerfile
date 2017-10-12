@@ -10,3 +10,4 @@ RUN npm i --quiet
 
 # Copy app source
 COPY src .
+CMD [ "npm", "run", "start" ]

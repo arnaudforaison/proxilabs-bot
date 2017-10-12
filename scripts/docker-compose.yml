@@ -1,8 +1,7 @@
 version: '3'
 services:
   proxilabsbot:
-    images: "arnaudforaison/proxilabs-bot"
-    command: npm run start
+    image: arnaudforaison/proxilabs-bot
     ports:
       - "3000:3000"
     env_file:
