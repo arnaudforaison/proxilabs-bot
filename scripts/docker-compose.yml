@@ -1,8 +1,7 @@
 version: '3'
 services:
   proxilabsbot:
-    image: arnaudforaison/proxilabs-bot
+    image: "arnaudforaison/proxilabs-bot"
     ports:
       - "3000:3000"
-    env_file:
-      ./.env
+    env_file: "./.env"
