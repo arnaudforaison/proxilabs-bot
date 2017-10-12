@@ -1,6 +1,7 @@
 var Botkit = require('botkit');
 var Spi = require('./skills-spi');
 var BudgetService = require('./skills/budget.js');
+var port = '9090';
 
 /*var initialDaysRef = ref.child('initialDays');
 initialDaysRef.set(100);*/
@@ -31,7 +32,7 @@ bot.api.team.info({}, function (err, res) {
   })
 });
 
-controller.setupWebserver('9090', function (err, webserver) {
+controller.setupWebserver(port, function (err, webserver) {
   controller.createOauthEndpoints(controller.webserver, function(err, req, res){
     console.log('createOauthEndpoints', err, req, res);
   })
